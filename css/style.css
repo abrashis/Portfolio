@@ -41,10 +41,10 @@
             box-shadow: 0 10px 30px rgba(8,6,12,0.6), 0 1px 0 rgba(255,255,255,0.02) inset;
             animation: slideDown 0.6s ease;
         }
-        .nav-inner{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:4px 0.9rem; }
+        .nav-inner{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:6px 1rem; }
 
-        .logo { display:flex; align-items:center; gap:8px; }
-        .logo-img{ width:72px; height:72px; display:block; border-radius:0; box-shadow: none; background: transparent; }
+        .logo { display:flex; align-items:center; gap:14px; }
+        .logo-img{ width:64px; height:64px; display:block; border-radius:12px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
 
         .nav-links{ display:flex; gap:20px; align-items:center; list-style:none; }
         .nav-links li{ list-style:none; }
@@ -53,7 +53,7 @@
 
         /* Marquee Section */
         .marquee-section {
-            /* legacy marquee (unused) */
+
             display:none;
         }
 
@@ -72,7 +72,7 @@
             display:none;
         }
 
-        /* ===== Work marquee (modern) ===== */
+        /* ===== marquee ===== */
         .work-marquee-wrapper{ position:relative; z-index:1050; pointer-events:auto; }
         .work-marquee{ width:100%; max-width:1200px; margin: 18px auto 0 auto; overflow:hidden; padding:12px; border-radius:18px; border:1px solid rgba(255,255,255,0.03); background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02)); box-shadow: 0 18px 50px rgba(0,0,0,0.6); display:flex; gap:16px; align-items:center; position:relative; z-index:5; }
 
@@ -328,7 +328,6 @@
             position: relative;
         }
 
-        /* About Section - two-row layout with circular images */
         .about-content {
             display: grid;
             gap: 2.5rem;
@@ -342,7 +341,6 @@
             align-items: center;
         }
 
-        /* Make the second row mirror the first (image left, text right) */
         .about-row-2 {
             grid-template-columns: 420px 1fr;
         }
@@ -419,13 +417,11 @@
             justify-content: center;
         }
 
-        /* Constrain figure containers so images align consistently with the grid column */
         .about-figure-left, .about-figure-right {
             width: 100%;
             max-width: 420px;
         }
 
-        /* Reverse the gradient for the second row heading so it feels distinct */
         .about-row-2 .lead-title {
             color: var(--purple-dark);
         }
@@ -451,7 +447,6 @@
             .circle-photo.large { width: 180px; height: 180px; }
         }
 
-/* Main Contact Box (Wrapper for Form + Social Cards) */
 .contact-box {
     display: grid;
     grid-template-columns: 1.3fr 1fr;
@@ -512,7 +507,6 @@
     gap: 15px;
 }
 
-/* Individual Cards */
 .social-card {
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: 12px;
@@ -528,7 +522,7 @@
     transform: translateY(-4px);
 }
 
-/* Icons (Replace with images if you want) */
+
 .icon {
     width: 35px;
     height: 35px;
@@ -667,7 +661,7 @@
                 font-size: 1.5rem;
             }
         }
-        /* Project tools pill: clean horizontal icon bar shown only in Projects */
+
         .project-tools-pill{
             margin: 1.8rem auto 0 auto;
             display: flex;
