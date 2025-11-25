@@ -22,6 +22,9 @@
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
+            <div class="nav-actions">
+                <button id="navbar-theme-toggle" class="icon-btn" aria-label="Toggle theme">🌓</button>
+            </div>
         </div>
     </nav>
 
@@ -116,6 +119,8 @@
         </div>
     </section>
 
+    <!-- Large feature video and big interactive canvas removed per request (kept only mini media inside Projects) -->
+
 
 
     <!-- About Section -->
@@ -145,6 +150,7 @@
                     </div>
                 </div>
             </div>
+            <!-- About media removed per request -->
         </div>
     </section>
 
@@ -218,6 +224,29 @@
 
 
 <!-- Copyright section -->
+    <!-- Me reel / final video + canvas -->
+    <section id="me-showcase" class="fade-in">
+        <div class="container">
+            <h2>My Reel</h2>
+            <div class="me-row" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+                <div style="flex:1 1 480px;min-width:280px;">
+                    <video id="me-video" class="rounded-video" controls playsinline
+                           data-local-src="assets/video/me.mp4"
+                           data-fallback-src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+                           poster="image/me-poster.jpg">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div style="flex:1 1 280px;min-width:200px;">
+                    <canvas class="mini-canvas me-canvas" style="width:100%;height:260px;border-radius:12px;"></canvas>
+                    <div style="margin-top:10px;">
+                        <input id="me-text-input" class="me-text-input" type="text" placeholder="Type here — text will appear on the canvas" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <footer>
         <p>Designed & Developed by Ashis Acharya</p>
         <p class="copyright">© 2025 Ashis Acharya. All Rights Reserved.</p>
@@ -225,71 +254,16 @@
 
     
 
-<script>
+    <!-- Floating right-side menu -->
+    <div class="floating-menu" aria-hidden="false">
+        <button id="fm-theme" class="float-btn" title="Toggle theme">🎨</button>
+        <button id="fm-audio" class="float-btn" title="Play / Pause audio">🎵</button>
+        <button id="fm-top" class="float-btn" title="Back to top">⬆️</button>
+    </div>
 
-    // Fade-in animation
-    const observerOptions = {
-        threshold: 0.2,
-        rootMargin: '0px 0px -100px 0px'
-    };
+    <audio id="bg-audio" src="assets/audio/voice.mp3" loop preload="none"></audio>
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, observerOptions);
-
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    });
-
-    // Contact form: open Gmail compose in a new tab with prefilled fields
-    (function () {
-        const form = document.getElementById('contactForm');
-        if (!form) return;
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const to = 'abrashis777@gmail.com';
-            const name = document.getElementById('name')?.value.trim() || '';
-            const email = document.getElementById('email')?.value.trim() || '';
-            const message = document.getElementById('message')?.value.trim() || '';
-
-            const subject = name ? `Portfolio message from ${name}` : 'Portfolio message';
-            const bodyLines = [];
-            if (message) bodyLines.push(message);
-            if (email) bodyLines.push('\n---\nSender: ' + email);
-            const body = encodeURIComponent(bodyLines.join('\n'));
-            const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${body}`;
-
-            // Open Gmail compose in a new tab
-            window.open(url, '_blank');
-
-            // Optionally give user feedback (small flash) — simple visual cue
-            const btn = form.querySelector('.submit-btn');
-            if (btn) {
-                btn.textContent = 'Opening Gmail...';
-                btn.disabled = true;
-                setTimeout(() => {
-                    btn.textContent = 'Send Message';
-                    btn.disabled = false;
-                }, 3000);
-            }
-        });
-    })();
-
-</script>
+    <script src="script.js"></script>
 
 </body>
 </html>
