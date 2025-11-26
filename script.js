@@ -8,25 +8,118 @@
     const body = document.body;
     const NAV_TOGGLE = $('#navbar-theme-toggle');
     const FM_THEME_BTN = $('#fm-theme');
+    const FM_AUDIO_BTN = $('#fm-audio');
     const THEME_KEY = 'site-theme';
+
+    const MOON_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="currentColor"/></svg>';
+    const SUN_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 4V2M12 22v-2M4.93 4.93L3.51 3.51M20.49 20.49l-1.42-1.42M4 12H2M22 12h-2M4.93 19.07l-1.42 1.42M20.49 3.51l-1.42 1.42M12 8a4 4 0 100 8 4 4 0 000-8z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
     function applyTheme(theme) {
         if (theme === 'light') body.classList.add('light-theme');
         else body.classList.remove('light-theme');
         try { localStorage.setItem(THEME_KEY, theme); } catch (e) { }
-        // update small UI indicators if present
-        if (NAV_TOGGLE) NAV_TOGGLE.textContent = theme === 'light' ? '🌙' : '☀️';
-        if (FM_THEME_BTN) FM_THEME_BTN.textContent = '🎨';
+
+        if (NAV_TOGGLE) {
+            const iconEl = NAV_TOGGLE.querySelector('.theme-icon');
+            if (iconEl) iconEl.innerHTML = theme === 'light' ? SUN_SVG : MOON_SVG;
+            else NAV_TOGGLE.innerHTML = theme === 'light' ? SUN_SVG : MOON_SVG;
+        }
+        if (FM_THEME_BTN) FM_THEME_BTN.textContent = '👌';
     }
 
     function toggleTheme() { applyTheme(body.classList.contains('light-theme') ? 'dark' : 'light'); }
 
-    // init theme
+    let techRunning = false;
+    let techTimer = null;
+    let techContainer = null;
+
+    function createTechOverlay() {
+        if (techContainer) return techContainer;
+        const container = document.createElement('div');
+        container.className = 'tech-overlay';
+        container.style.position = 'fixed';
+        container.style.left = '0';
+        container.style.top = '0';
+        container.style.width = '100vw';
+        container.style.height = '100vh';
+        container.style.pointerEvents = 'none';
+        container.style.zIndex = '9998';
+        document.body.appendChild(container);
+        techContainer = container;
+        return container;
+    }
+
+    function populateTechOverlay() {
+        const container = createTechOverlay();
+        container.innerHTML = '';
+        const ww = window.innerWidth;
+        const hh = window.innerHeight;
+        const cols = Math.ceil(ww / 28);
+        const rows = Math.ceil(hh / 28);
+        const total = cols * rows;
+        for (let i = 0; i < total; i++) {
+            const span = document.createElement('span');
+            span.textContent = Math.random() > 0.5 ? '1' : '0';
+            span.style.position = 'absolute';
+            const col = i % cols;
+            const row = Math.floor(i / cols);
+            const x = (col + 0.5) / cols * 100;
+            const y = (row + 0.5) / rows * 100;
+            const jitterX = (Math.random() - 0.5) * (100 / cols * 0.4);
+            const jitterY = (Math.random() - 0.5) * (100 / rows * 0.4);
+            span.style.left = `${x + jitterX}%`;
+            span.style.top = `${y + jitterY}%`;
+            span.style.transform = 'translate(-50%, -50%)';
+            span.style.color = 'rgba(126,243,208,0.95)';
+            span.style.fontFamily = 'monospace, system-ui';
+            span.style.fontSize = `${12 + Math.floor(Math.random() * 10)}px`;
+            span.style.opacity = '0';
+            span.style.transition = `opacity ${0.6 + Math.random() * 0.8}s ease, transform ${0.8 + Math.random() * 0.8}s ease`;
+            container.appendChild(span);
+            setTimeout(() => { span.style.opacity = '1'; }, Math.random() * 600);
+        }
+    }
+
+    function mutateTechOverlay() {
+        if (!techContainer) return;
+        const children = Array.from(techContainer.children);
+        children.forEach((span, idx) => {
+            if (Math.random() < 0.08) span.textContent = Math.random() > 0.5 ? '1' : '0';
+            if (Math.random() < 0.06) {
+                span.style.transform = `translate(-50%, -50%) translate(${(Math.random() - 0.5) * 24}px, ${(Math.random() - 0.5) * 24}px) scale(${0.9 + Math.random() * 0.3})`;
+            } else {
+                span.style.transform = 'translate(-50%, -50%) scale(1)';
+            }
+            if (Math.random() < 0.02) span.style.opacity = String(0.2 + Math.random() * 0.9);
+            else span.style.opacity = '1';
+        });
+    }
+
+    function startTechFill() {
+        if (techRunning) return;
+        techRunning = true;
+        populateTechOverlay();
+        techTimer = setInterval(mutateTechOverlay, 220);
+        window.addEventListener('resize', populateTechOverlay);
+        if (FM_THEME_BTN) FM_THEME_BTN.textContent = '⏸️';
+    }
+
+    function stopTechFill() {
+        if (!techRunning) return;
+        techRunning = false;
+        if (techTimer) { clearInterval(techTimer); techTimer = null; }
+        if (techContainer) { techContainer.remove(); techContainer = null; }
+        window.removeEventListener('resize', populateTechOverlay);
+        if (FM_THEME_BTN) FM_THEME_BTN.textContent = '👌';
+    }
+
+    function toggleTechFill() { if (techRunning) stopTechFill(); else startTechFill(); }
+
     (function initTheme() {
         const stored = (() => { try { return localStorage.getItem(THEME_KEY); } catch (e) { return null; } })();
         applyTheme(stored || 'dark');
-        if (NAV_TOGGLE) NAV_TOGGLE.addEventListener('click', toggleTheme);
-        if (FM_THEME_BTN) FM_THEME_BTN.addEventListener('click', () => { toggleTheme(); burst(FM_THEME_BTN); });
+        if (NAV_TOGGLE) NAV_TOGGLE.addEventListener('click', () => { toggleTheme(); });
+        if (FM_THEME_BTN) FM_THEME_BTN.addEventListener('click', () => { toggleTechFill(); });
     })();
 
     function burst(btn) {
@@ -46,59 +139,39 @@
         }
     }
 
-    const audioEl = $('#bg-audio');
-    const FM_AUDIO_BTN = $('#fm-audio');
-    let synthFallback = null;
+    const BG_AUDIO = $('#bg-audio');
 
-    function createSynthFallback() {
-        if (synthFallback) return synthFallback;
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'sine'; osc.frequency.value = 220;
-            gain.gain.value = 0.0;
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start();
-            synthFallback = { ctx, osc, gain, playing: false };
-        } catch (e) { synthFallback = null; }
-        return synthFallback;
-    }
-
-    function setAudioBtnPlaying(on) {
+    function updateAudioButton() {
         if (!FM_AUDIO_BTN) return;
-        FM_AUDIO_BTN.classList.toggle('playing', !!on);
-        FM_AUDIO_BTN.title = on ? 'Pause audio' : 'Play audio';
+        try {
+            if (!BG_AUDIO || BG_AUDIO.paused) {
+                FM_AUDIO_BTN.textContent = '▶️';
+                FM_AUDIO_BTN.title = 'Play audio';
+            } else {
+                FM_AUDIO_BTN.textContent = '⏸️';
+                FM_AUDIO_BTN.title = 'Pause audio';
+            }
+        } catch (e) { }
     }
 
-    function toggleSynth() {
-        const s = createSynthFallback();
-        if (!s) return;
-        if (!s.playing) {
-            s.ctx.resume().then(() => { s.gain.gain.setTargetAtTime(0.12, s.ctx.currentTime, 0.02); s.playing = true; setAudioBtnPlaying(true); });
-        } else { s.gain.gain.setTargetAtTime(0.0, s.ctx.currentTime, 0.02); s.playing = false; setAudioBtnPlaying(false); }
+    function toggleAudio() {
+        if (!BG_AUDIO) return;
+        if (BG_AUDIO.paused) {
+            BG_AUDIO.play().catch(() => { });
+        } else {
+            BG_AUDIO.pause();
+        }
+        updateAudioButton();
     }
 
-    if (FM_AUDIO_BTN) FM_AUDIO_BTN.disabled = true;
-
-    if (audioEl) {
-        
-        FM_AUDIO_BTN && (FM_AUDIO_BTN.disabled = false);
-        FM_AUDIO_BTN && FM_AUDIO_BTN.addEventListener('click', () => {
-            if (audioEl.paused) {
-                const p = audioEl.play();
-                if (p && p.catch) p.catch(() => { createSynthFallback(); toggleSynth(); });
-                else setAudioBtnPlaying(true);
-            } else { audioEl.pause(); setAudioBtnPlaying(false); }
-        });
-        audioEl.addEventListener('play', () => setAudioBtnPlaying(true));
-        audioEl.addEventListener('pause', () => setAudioBtnPlaying(false));
-        audioEl.addEventListener('error', () => { createSynthFallback(); FM_AUDIO_BTN.disabled = false; });
-    } else {
-  
-        createSynthFallback();
-        if (FM_AUDIO_BTN) { FM_AUDIO_BTN.disabled = false; FM_AUDIO_BTN.addEventListener('click', toggleSynth); }
+    if (FM_AUDIO_BTN) {
+        FM_AUDIO_BTN.addEventListener('click', toggleAudio);
+    }
+    if (BG_AUDIO) {
+        BG_AUDIO.addEventListener('play', updateAudioButton);
+        BG_AUDIO.addEventListener('pause', updateAudioButton);
+        BG_AUDIO.addEventListener('ended', updateAudioButton);
+        updateAudioButton();
     }
 
     const observer = new IntersectionObserver((entries) => {
@@ -205,7 +278,7 @@
         wrapper.addEventListener('mouseleave', () => { if (!vid) return; vid.pause(); vid.style.opacity = '0'; if (img) img.style.opacity = '1'; wrapper.classList.remove('playing'); });
     });
 
- const VIDEO_FALLBACK = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
+    const VIDEO_FALLBACK = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
     async function chooseVideoSource(localUrl, fallbackUrl = VIDEO_FALLBACK) {
         if (!localUrl) return fallbackUrl;
         try {
@@ -221,14 +294,60 @@
     $$('video[data-local-src]').forEach(async (v) => {
         const local = v.getAttribute('data-local-src'); const fallback = v.getAttribute('data-fallback-src') || VIDEO_FALLBACK;
         const chosen = await chooseVideoSource(local, fallback); try { v.src = chosen; v.load(); } catch (e) { }
-        // click toggles play/pause
+
         v.addEventListener('click', () => { if (v.paused) v.play().catch(() => { }); else v.pause(); });
-        // observe parent for autoplaying muted loops
         if (v.muted && v.loop) observer.observe(v.parentElement || v);
         v.addEventListener('error', () => { if (v.src !== fallback) { v.src = fallback; try { v.load(); } catch (e) { } } });
     });
 
+
+    (function ensureReelPreview() {
+        const meVideo = document.getElementById('me-video');
+        if (!meVideo) return;
+        try {
+            meVideo.preload = 'metadata';
+            const attr = meVideo.getAttribute('data-start-preview');
+            const start = Math.max(0.05, parseFloat(attr) || 0.1);
+
+            function safeSeek() {
+                try {
+                    meVideo.currentTime = start;
+                } catch (err) {
+                }
+            }
+
+            meVideo.addEventListener('loadedmetadata', function onMeta() {
+                safeSeek();
+            }, { once: true });
+
+            meVideo.addEventListener('loadeddata', function onData() {
+                safeSeek();
+            }, { once: true });
+
+            meVideo.addEventListener('seeked', function onSeek() {
+                try { meVideo.removeAttribute('poster'); } catch (e) { }
+                try { if (!meVideo.paused) meVideo.pause(); } catch (e) { }
+            });
+
+            setTimeout(safeSeek, 120);
+        } catch (e) { }
+    })();
+
     const FM_TOP = $('#fm-top'); if (FM_TOP) FM_TOP.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    function initMarquees() {
+        $$('.work-marquee').forEach(wrapper => {
+            const tracks = $$('.marquee-track', wrapper);
+            if (tracks.length === 1) {
+                const clone = tracks[0].cloneNode(true);
+                clone.setAttribute('aria-hidden', 'true');
+                wrapper.appendChild(clone);
+            }
+        });
+    }
+
+
+    initMarquees();
 
 })();
 

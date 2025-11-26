@@ -688,6 +688,59 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
 
+        /* Light-theme specific overrides to ensure good contrast for elements that used hard-coded translucent whites */
+        body.light-theme{
+            --bg: #ffffff;
+            --text: #111827;
+            --white: #111827;
+            --muted: rgba(17,24,39,0.04);
+            --card: rgba(246,249,252,0.85);
+            --surface-border: rgba(17,24,39,0.06);
+        }
+
+        body.light-theme .project-card,
+        body.light-theme .contact-box,
+        body.light-theme .social-card,
+        body.light-theme .about-row .about-text-left,
+        body.light-theme .about-row .about-text-right,
+        body.light-theme .work-marquee,
+        body.light-theme .project-tools-pill,
+        body.light-theme .content-card .card-inner,
+        body.light-theme .media-inner {
+            background: var(--card);
+            border-color: var(--surface-border);
+            color: var(--text);
+            box-shadow: 0 8px 30px rgba(2,6,23,0.06);
+        }
+
+        body.light-theme .form-group input,
+        body.light-theme .form-group textarea,
+        body.light-theme .me-text-input,
+        body.light-theme .project-tool {
+            background: rgba(17,24,39,0.03);
+            color: var(--text);
+            border: 1px solid rgba(17,24,39,0.06);
+        }
+
+        body.light-theme .me-text-input::placeholder,
+        body.light-theme ::placeholder {
+            color: rgba(17,24,39,0.5);
+        }
+
+        body.light-theme footer {
+            background: #f8fafc;
+            color: var(--text);
+            border-top-color: rgba(17,24,39,0.06);
+        }
+
+        /* Ensure icons and text everywhere inherit the readable color on light theme */
+        body.light-theme .nav-links a,
+        body.light-theme h2,
+        body.light-theme h1,
+        body.light-theme p,
+        body.light-theme label { color: var(--text); }
+
+
         @media (max-width: 700px){
             .project-tools-pill{ gap:10px; padding:8px 12px; }
             .project-tool{ width:40px; height:40px; }
@@ -710,6 +763,60 @@
 
         /* Light theme variables applied on body.light-theme */
         body.light-theme{ --bg: #ffffff; --text: #111827; --white: #111827; --muted: rgba(17,24,39,0.04); --card: rgba(10,8,20,0.03); }
+
+        /* Light-mode tweaks for the Home / hero area to look modern and soft */
+        body.light-theme .hero {
+            background: linear-gradient(180deg, #f7fafc 0%, #f3f6fb 60%);
+        }
+
+        body.light-theme .nav-inner,
+        body.light-theme nav {
+            background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.6));
+            box-shadow: 0 8px 20px rgba(16,24,40,0.06);
+            border: 1px solid rgba(17,24,39,0.04);
+        }
+
+        body.light-theme .lighting-effect .light1,
+        body.light-theme .lighting-effect .light2,
+        body.light-theme .lighting-effect .light3 {
+            filter: blur(48px);
+            opacity: 0.7;
+        }
+
+        body.light-theme .lighting-effect .light1 { background: radial-gradient(circle, rgba(255,201,140,0.28), transparent); }
+        body.light-theme .lighting-effect .light2 { background: radial-gradient(circle, rgba(255,182,193,0.18), transparent); }
+        body.light-theme .lighting-effect .light3 { background: radial-gradient(circle, rgba(200,230,255,0.14), transparent); }
+
+        body.light-theme .floating-shapes .shape { filter: blur(40px); opacity: 0.85; }
+        body.light-theme .floating-shapes .shape1 { background: rgba(235,201,255,0.12); }
+        body.light-theme .floating-shapes .shape2 { background: rgba(220,240,255,0.08); }
+        body.light-theme .floating-shapes .shape3 { background: rgba(255,230,240,0.07); }
+
+        body.light-theme .hero h1 {
+            color: #0f1724;
+            filter: none;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+        }
+
+        body.light-theme .hero p { color: rgba(17,24,39,0.78); }
+
+        body.light-theme .cta-btn {
+            background: linear-gradient(180deg, var(--purple), var(--purple-dark));
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(122,64,200,0.09);
+        }
+
+        body.light-theme .work-marquee,
+        body.light-theme .marquee-track img {
+            background: transparent;
+            box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+            border-color: rgba(17,24,39,0.04);
+        }
+
+        /* Reduce 'glow' and harsh dark shadows in light mode for a softer, modern look */
+        body.light-theme .logo-img,
+        body.light-theme .about-image img,
+        body.light-theme .circle-photo { box-shadow: 0 8px 26px rgba(16,24,40,0.06); }
 
         .nav-actions{ display:flex; align-items:center; gap:8px; }
         .icon-btn{ background: transparent; border: none; color: var(--white); font-size:18px; padding:8px; border-radius:10px; cursor:pointer; transition: transform .16s ease, background .16s ease; }
@@ -788,6 +895,17 @@
         /* input for me canvas text */
         .me-text-input{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); color:var(--white); }
         .me-text-input::placeholder{ color: rgba(255,255,255,0.5); }
+
+
+        /* Project card icon links */
+        .project-card .project-links{ margin-top:12px; display:flex; gap:10px; align-items:center; }
+        .project-card .project-links a{ display:inline-block; }
+        .project-card .project-links img{ width:28px; height:28px; object-fit:contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45)); transition: transform .18s ease, filter .18s ease; }
+        .project-card .project-links a:hover img{ transform: translateY(-3px) scale(1.06); filter: brightness(1.08) saturate(1.1); }
+
+        /* Modern rounded icon buttons */
+        .project-card .project-links .social-icon{ display:inline-grid; place-items:center; width:40px; height:40px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); box-shadow: 0 6px 20px rgba(0,0,0,0.35); padding:6px; }
+        .project-card .project-links .social-icon img{ width:20px; height:20px; }
 
 
 
